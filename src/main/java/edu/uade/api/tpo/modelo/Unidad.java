@@ -111,9 +111,21 @@ public class Unidad {
 	public String getPiso() {
 		return piso;
 	}
+	
+	public void setPiso(String piso) {
+		this.piso = piso;
+	}
 
 	public String getNumero() {
 		return numero;
+	}
+	
+	public void setNumero(String numero) {
+		this.numero = numero;
+	}
+	
+	public void setHabitado(boolean habitado) {
+		this.habitado = habitado;
 	}
 
 	
@@ -121,6 +133,10 @@ public class Unidad {
 		return edificio;
 	}
 
+	public void setEdificio(Edificio edificio) {
+		this.edificio = edificio;
+	}
+	
 	public List<Persona> getDuenios() {
 		return duenios;
 	}
