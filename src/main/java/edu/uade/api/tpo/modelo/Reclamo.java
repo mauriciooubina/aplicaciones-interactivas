@@ -13,7 +13,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import edu.uade.api.tpo.views.EdificioView;
 import edu.uade.api.tpo.views.Estado;
+import edu.uade.api.tpo.views.ImagenView;
+import edu.uade.api.tpo.views.PersonaView;
+import edu.uade.api.tpo.views.ReclamoView;
+import edu.uade.api.tpo.views.UnidadView;
+
 import javax.persistence.Transient;
 
 @Entity
@@ -109,5 +115,16 @@ public class Reclamo {
 	
 	public void update() {
 		
+	}
+	
+	public ReclamoView toView() {
+		PersonaView auxPersona = usuario.toView();
+		EdificioView auxEdificio = edificio.toView();
+		UnidadView auxUnidad = unidad.toView();
+		List<ImagenView> auxImagen = new ArrayList<ImagenView>();
+		for(Imagen img : imagenes) {
+			auxImagen.add(img.toView());
+		}
+		return new ReclamoView(numero, auxPersona, auxEdificio, ubicacion, descripcion, auxUnidad, estado, auxImagen);
 	}
 }
