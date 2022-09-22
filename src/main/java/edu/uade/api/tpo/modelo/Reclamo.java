@@ -105,6 +105,25 @@ public class Reclamo {
 		return this.imagenes;
 	}
 	
+	public void setUsuario(Persona usuario) {
+		this.usuario = usuario;
+	}
+	public void setEdificio(Edificio edificio) {
+		this.edificio = edificio;
+	}
+	public void setUbicacion(String ubicacion) {
+		this.ubicacion = ubicacion;
+	}
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+	public void setUnidad(Unidad unidad) {
+		this.unidad = unidad;
+	}
+	public void setImagenes(List<Imagen> imagenes) {
+		this.imagenes = imagenes;
+	}
+	
 	public void cambiarEstado(Estado estado) {
 		this.estado = estado;
 	}

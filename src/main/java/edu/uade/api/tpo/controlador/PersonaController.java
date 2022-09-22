@@ -53,19 +53,17 @@ public class PersonaController {
 			return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(persona.get().toView());
 	}
-	/*
+	
 	@PutMapping("/{documento}")
 	public ResponseEntity<?> updatePersonaPorId(@RequestBody Persona persona, @PathVariable(value = "documento") String documento){
 		Optional<Persona> oPersona = personaService.findById(documento);
 		if(!oPersona.isPresent())
 			return ResponseEntity.notFound().build();
 		
-		oPersona.get().
-		oPersona.get().setDireccion(persona.getDireccion());
-		oPersona.get().setEstado(persona.getEstado());
+		oPersona.get().setNombre(persona.getNombre());
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(personaService.save(oPersona.get()));
-	}*/
+	}
 	
 	@DeleteMapping("/{documento}")
 	public ResponseEntity<?> eliminarPersonaPorId(@PathVariable(value = "documento") String documento){

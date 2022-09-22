@@ -53,19 +53,18 @@ public class EdificioController {
 			return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(edificio.get().toView());
 	}
-	/*
+	
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateEdificioPorId(@RequestBody Edificio edificio, @PathVariable(value = "id") Integer id){
 		Optional<Edificio> oEdificio = edificioService.findById(id);
-		if(!oUnidad.isPresent())
+		if(!oEdificio.isPresent())
 			return ResponseEntity.notFound().build();
 		
-		oEdificio.get().
-		oEdificio.get().setDireccion(unidad.getDireccion());
-		oEdificio.get().setEstado(unidad.getEstado());
+		oEdificio.get().setNombre(edificio.getNombre());
+		oEdificio.get().setDireccion(edificio.getDireccion());
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(edificioService.save(oEdificio.get()));
-	}*/
+	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> eliminarEdificioPorId(@PathVariable(value = "id") Integer edificio){

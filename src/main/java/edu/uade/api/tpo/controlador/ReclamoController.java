@@ -52,19 +52,23 @@ public class ReclamoController {
 			return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(unidad.get().toView());
 	}
-	/*
+	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateUnidadPorId(@RequestBody Reclamo reclamo, @PathVariable(value = "id") Integer id){
+	public ResponseEntity<?> updateReclamoPorId(@RequestBody Reclamo reclamo, @PathVariable(value = "id") Integer id){
 		Optional<Reclamo> oReclamo = reclamoService.findById(id);
 		if(!oReclamo.isPresent())
 			return ResponseEntity.notFound().build();
 		
-		oReclamo.get().
-		oReclamo.get().setDireccion(unidad.getDireccion());
-		oReclamo.get().setEstado(unidad.getEstado());
+		oReclamo.get().setUsuario(reclamo.getUsuario());
+		oReclamo.get().setEdificio(reclamo.getEdificio());
+		oReclamo.get().setUbicacion(reclamo.getUbicacion());
+		oReclamo.get().setDescripcion(reclamo.getDescripcion());
+		oReclamo.get().setUnidad(reclamo.getUnidad());
+		oReclamo.get().cambiarEstado(reclamo.getEstado());
+		oReclamo.get().setImagenes(reclamo.getImagenes());
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(reclamoService.save(oReclamo.get()));
-	}*/
+	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> eliminarReclamoPorId(@PathVariable(value = "id") Integer id){

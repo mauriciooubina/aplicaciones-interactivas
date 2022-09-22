@@ -54,19 +54,19 @@ public class ImagenController {
 			return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(imagen.get().toView());
 	}
-	/*
+	
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateUnidadPorId(@RequestBody Imagen imagen, @PathVariable(value = "id") Integer id){
-		Optional<Imagen> oImagen = unidadService.findById(id);
-		if(!oUnidad.isPresent())
+		Optional<Imagen> oImagen = imagenService.findById(id);
+		if(!oImagen.isPresent())
 			return ResponseEntity.notFound().build();
 		
-		oImagen.get().
+		oImagen.get().setNumero(id);
 		oImagen.get().setDireccion(imagen.getDireccion());
-		oImagen.get().setEstado(imagen.getEstado());
+		oImagen.get().setTipo(imagen.getTipo());
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(imagenService.save(oImagen.get()));
-	}*/
+	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> eliminarImagenPorId(@PathVariable(value = "id") Integer imagen){

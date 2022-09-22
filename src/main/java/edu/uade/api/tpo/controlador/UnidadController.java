@@ -49,19 +49,20 @@ public class UnidadController {
 			return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(unidad.get().toView());
 	}
-	/*
+	
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateUnidadPorId(@RequestBody Unidad unidad, @PathVariable(value = "id") Integer id){
 		Optional<Unidad> oUnidad = unidadService.findById(id);
 		if(!oUnidad.isPresent())
 			return ResponseEntity.notFound().build();
 		
-		oUnidad.get().
-		oUnidad.get().setDireccion(unidad.getDireccion());
-		oUnidad.get().setEstado(unidad.getEstado());
+		oUnidad.get().setPiso(unidad.getPiso());
+		oUnidad.get().setNumero(unidad.getNumero());
+		oUnidad.get().setHabitado(unidad.estaHabitado());
+		oUnidad.get().setEdificio(unidad.getEdificio());
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(unidadService.save(oUnidad.get()));
-	}*/
+	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> eliminarUnidadPorId(@PathVariable(value = "id") Integer unidad){
