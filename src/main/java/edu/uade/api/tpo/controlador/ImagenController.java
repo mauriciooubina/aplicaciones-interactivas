@@ -33,10 +33,12 @@ public class ImagenController {
 	ImagenServiceImpl imagenService;
 	
 	@GetMapping()
-	public List<Imagen> obtenerImagenes(){
-		List<Imagen> imagenes = StreamSupport
-				.stream(imagenService.findAll().spliterator(), false)
-				.collect(Collectors.toList());
+	public List<ImagenView> obtenerImagenes(){
+		List<ImagenView> imagenes = new ArrayList<ImagenView>();
+		Iterable<Imagen> iterable =this.imagenService.findAll();
+		for(Imagen u : iterable) {
+			imagenes.add(u.toView());
+		}
 		return imagenes;
 	} 
 	
@@ -50,7 +52,7 @@ public class ImagenController {
 		Optional<Imagen> imagen = imagenService.findById(id);
 		if(!imagen.isPresent())
 			return ResponseEntity.notFound().build();
-		return ResponseEntity.ok(imagen.get());
+		return ResponseEntity.ok(imagen.get().toView());
 	}
 	/*
 	@PutMapping("/{id}")

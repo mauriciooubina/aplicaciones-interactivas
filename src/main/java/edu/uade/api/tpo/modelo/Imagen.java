@@ -23,6 +23,8 @@ public class Imagen {
 	@Column(name = "path")
 	private String direccion;
 	private String tipo;
+	
+	public Imagen() {}
 
 	public Imagen(String direccion, String tipo) {
 		this.direccion = direccion;
