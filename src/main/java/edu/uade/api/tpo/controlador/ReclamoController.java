@@ -31,10 +31,12 @@ public class ReclamoController {
 	ReclamoServiceImpl reclamoService;
 	
 	@GetMapping()
-	public List<Reclamo> obtenerReclamos(){
-		List<Reclamo> reclamos = StreamSupport
-				.stream(reclamoService.findAll().spliterator(), false)
-				.collect(Collectors.toList());
+	public List<ReclamoView> obtenerReclamos(){
+		List<ReclamoView> reclamos = new ArrayList<ReclamoView>();
+		Iterable<Reclamo> iterable =this.reclamoService.findAll();
+		for(Reclamo u : iterable) {
+			reclamos.add(u.toView());
+		}
 		return reclamos;
 	} 
 	
@@ -48,7 +50,7 @@ public class ReclamoController {
 		Optional<Reclamo> unidad = reclamoService.findById(id);
 		if(!unidad.isPresent())
 			return ResponseEntity.notFound().build();
-		return ResponseEntity.ok(unidad.get());
+		return ResponseEntity.ok(unidad.get().toView());
 	}
 	/*
 	@PutMapping("/{id}")
