@@ -19,7 +19,7 @@ public interface IEdificioService {
 	Edificio save(Edificio edificio);
 	
 	void deleteById(Integer id);
-	
-	
 
+
+	Edificio update(Edificio edificio, int codigo);
 }

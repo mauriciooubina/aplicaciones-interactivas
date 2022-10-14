@@ -48,15 +48,7 @@ public class Controlador {
 	}
 
 	public Edificio actualizarEdificio(Edificio edificio, int codigo){
-		Optional<Edificio> edificioBuscado= edificioService.findById(codigo);
-		if(edificioBuscado.isPresent()){
-			Edificio edificioPorActualizar= edificioBuscado.get();
-			edificioPorActualizar.setDireccion(edificio.getDireccion());
-			edificioPorActualizar.setNombre(edificio.getNombre());
-			edificioPorActualizar.setUnidades(edificio.getUnidades());
-			log.info(String.valueOf(edificioPorActualizar));
-		}
-		return edificioService.save(edificio);
+		return edificioService.update(edificio, codigo);
 	}
 
 	public void eliminarEdificio(int codigo){
