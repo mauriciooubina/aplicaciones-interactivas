@@ -14,7 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import edu.uade.api.tpo.views.EdificioConUnidadesView;
 import edu.uade.api.tpo.views.EdificioView;
+import edu.uade.api.tpo.views.UnidadSinEdificioView;
 import lombok.ToString;
 
 
@@ -109,7 +111,16 @@ public class Edificio{
 		return resultado;
 	}
 
+	public void setUnidades(List<Unidad> unidades) {
+		this.unidades = unidades;
+	}
+
 	public EdificioView toView() {
 		return new EdificioView(codigo, nombre, direccion);
+	}
+
+	public EdificioConUnidadesView toViewConUnidades() {
+		List<UnidadSinEdificioView> unidadesSinEdificio= unidades.stream().map(Unidad::toViewSinEdificios).toList();
+		return new EdificioConUnidadesView(codigo, nombre, direccion,unidadesSinEdificio);
 	}
 }

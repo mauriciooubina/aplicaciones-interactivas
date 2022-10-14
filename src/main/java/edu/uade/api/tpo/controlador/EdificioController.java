@@ -6,6 +6,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import edu.uade.api.tpo.exceptions.EdificioException;
+import edu.uade.api.tpo.views.EdificioConUnidadesView;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,51 +30,44 @@ import edu.uade.api.tpo.views.UnidadView;
 
 @RestController
 @RequestMapping("/api/edificio")
+@Slf4j
 public class EdificioController {
+	private final Controlador controlador;
+
 	@Autowired
-	EdificioServiceImpl edificioService;
-	
+	public EdificioController(Controlador controlador){
+		log.debug("Calling controller");
+		this.controlador=controlador;
+	}
 	@GetMapping()
 	public List<EdificioView> obtenerEdificios(){
-		List<EdificioView> edificios = new ArrayList<EdificioView>();
-		Iterable<Edificio> iterable =this.edificioService.findAll();
-		for(Edificio u : iterable) {
-			edificios.add(u.toView());
-		}
-		return edificios;
-	} 
-	
+		return controlador.getEdificios();
+	}
+
+	@GetMapping(path="/unidades")
+	public List<EdificioConUnidadesView> obtenerEdificiosConUnidades(){
+		return controlador.getEdificiosConUnidades();
+	}
+
 	@PostMapping()
 	public ResponseEntity<?> guardarEdificio(@RequestBody Edificio edificio){
-		return ResponseEntity.status(HttpStatus.CREATED).body(edificioService.save(edificio));
+		return ResponseEntity.status(HttpStatus.CREATED).body(controlador.guardarEdificio(edificio));
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> obtenerEdificioPorId(@PathVariable Integer id){
-		Optional<Edificio> edificio = edificioService.findById(id);
-		if(!edificio.isPresent())
-			return ResponseEntity.notFound().build();
-		return ResponseEntity.ok(edificio.get().toView());
+	public ResponseEntity<?> obtenerEdificioPorId(@PathVariable Integer id) throws EdificioException {
+		return ResponseEntity.ok(controlador.buscarEdificio(id));
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateEdificioPorId(@RequestBody Edificio edificio, @PathVariable(value = "id") Integer id){
-		Optional<Edificio> oEdificio = edificioService.findById(id);
-		if(!oEdificio.isPresent())
-			return ResponseEntity.notFound().build();
-		
-		oEdificio.get().setNombre(edificio.getNombre());
-		oEdificio.get().setDireccion(edificio.getDireccion());
-		
-		return ResponseEntity.status(HttpStatus.CREATED).body(edificioService.save(oEdificio.get()));
+	public ResponseEntity<?> updateEdificio(@RequestBody Edificio edificio, @PathVariable int codigo){
+		return ResponseEntity.status(HttpStatus.CREATED).body(controlador.actualizarEdificio(edificio,codigo));
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> eliminarEdificioPorId(@PathVariable(value = "id") Integer edificio){
-		if(!edificioService.findById(edificio).isPresent())
-			return ResponseEntity.notFound().build();
-		
-		edificioService.deleteById(edificio);
-		return ResponseEntity.ok().build();
+		controlador.eliminarEdificio(edificio);
+
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

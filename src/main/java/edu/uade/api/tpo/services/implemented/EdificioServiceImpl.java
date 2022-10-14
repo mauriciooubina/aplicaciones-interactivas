@@ -1,6 +1,7 @@
 package edu.uade.api.tpo.services.implemented;
 
 import java.awt.print.Pageable;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,15 @@ import edu.uade.api.tpo.services.interfaces.IEdificioService;
 public class EdificioServiceImpl implements IEdificioService {
 
 	
+
+	private final EdificioRepositorio repositorio;
+
 	@Autowired
-	private EdificioRepositorio repositorio;
+	public EdificioServiceImpl(EdificioRepositorio repositorio){
+		this.repositorio=repositorio;
+	}
 	@Override
-	public Iterable<Edificio> findAll() {
+	public List<Edificio> findAll() {
 		return repositorio.findAll();
 	}
 

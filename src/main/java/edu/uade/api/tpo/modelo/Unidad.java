@@ -18,6 +18,7 @@ import javax.persistence.Table;
 
 import edu.uade.api.tpo.exceptions.UnidadException;
 import edu.uade.api.tpo.views.EdificioView;
+import edu.uade.api.tpo.views.UnidadSinEdificioView;
 import edu.uade.api.tpo.views.UnidadView;
 import lombok.ToString;
 
@@ -148,6 +149,10 @@ public class Unidad {
 	public UnidadView toView() {
 		EdificioView auxEdificio = edificio.toView();
 		return new UnidadView(id, piso, numero, habitado, auxEdificio);
+	}
+
+	public UnidadSinEdificioView toViewSinEdificios(){
+		return new UnidadSinEdificioView(id,piso,numero,habitado);
 	}
 
 	public String toString(){

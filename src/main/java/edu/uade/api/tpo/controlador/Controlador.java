@@ -2,6 +2,7 @@ package edu.uade.api.tpo.controlador;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import edu.uade.api.tpo.exceptions.EdificioException;
@@ -12,26 +13,53 @@ import edu.uade.api.tpo.modelo.Edificio;
 import edu.uade.api.tpo.modelo.Persona;
 import edu.uade.api.tpo.modelo.Reclamo;
 import edu.uade.api.tpo.modelo.Unidad;
-import edu.uade.api.tpo.views.EdificioView;
-import edu.uade.api.tpo.views.Estado;
-import edu.uade.api.tpo.views.PersonaView;
-import edu.uade.api.tpo.views.ReclamoView;
-import edu.uade.api.tpo.views.UnidadView;
+import edu.uade.api.tpo.services.implemented.EdificioServiceImpl;
+import edu.uade.api.tpo.services.interfaces.IEdificioService;
+import edu.uade.api.tpo.views.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
+
+@Controller
+@Slf4j
 public class Controlador {
 
-	private static Controlador instancia;
-	
-	private Controlador() { }
-	
-	public static Controlador getInstancia() {
-		if(instancia == null)
-			instancia = new Controlador();
-		return instancia;
+	private final IEdificioService edificioService;
+
+	@Autowired
+	private Controlador(IEdificioService edificioService) {
+		this.edificioService=edificioService;
 	}
+
 	
 	public List<EdificioView> getEdificios(){
-		return null;
+		log.debug("Called getEdificios from Controller");
+		return edificioService.findAll().stream().map(Edificio::toView).toList();
+	}
+
+	public List<EdificioConUnidadesView> getEdificiosConUnidades(){
+		log.debug("Called getEdificiosConUnidades from Controller");
+		return edificioService.findAll().stream().map(Edificio::toViewConUnidades).toList();
+	}
+
+	public Edificio guardarEdificio(Edificio edificio){
+		return edificioService.save(edificio);
+	}
+
+	public Edificio actualizarEdificio(Edificio edificio, int codigo){
+		Optional<Edificio> edificioBuscado= edificioService.findById(codigo);
+		if(edificioBuscado.isPresent()){
+			Edificio edificioPorActualizar= edificioBuscado.get();
+			edificioPorActualizar.setDireccion(edificio.getDireccion());
+			edificioPorActualizar.setNombre(edificio.getNombre());
+			edificioPorActualizar.setUnidades(edificio.getUnidades());
+		}
+		return edificioService.save(edificio);
+	}
+
+	public void eliminarEdificio(int codigo){
+		edificioService.deleteById(codigo);
 	}
 	
 	public List<UnidadView> getUnidadesPorEdificio(int codigo) throws EdificioException{
@@ -172,8 +200,8 @@ public class Controlador {
 		reclamo.update();
 	}
 	
-	private Edificio buscarEdificio(int codigo) throws EdificioException {
-		return null;
+	public Edificio buscarEdificio(int codigo) throws EdificioException {
+		return edificioService.findById(codigo).orElse(null);
 	}
 
 	private Unidad buscarUnidad(int codigo, String piso, String numero) throws UnidadException{
