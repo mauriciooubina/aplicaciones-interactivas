@@ -40,13 +40,13 @@ public class EdificioController {
 		this.controlador=controlador;
 	}
 	@GetMapping()
-	public List<EdificioView> obtenerEdificios(){
-		return controlador.getEdificios();
+	public ResponseEntity<List<EdificioView>> obtenerEdificios(){
+		return ResponseEntity.ok(controlador.getEdificios());
 	}
 
 	@GetMapping(path="/unidades")
-	public List<EdificioConUnidadesView> obtenerEdificiosConUnidades(){
-		return controlador.getEdificiosConUnidades();
+	public ResponseEntity<List<EdificioConUnidadesView>> obtenerEdificiosConUnidades(){
+		return ResponseEntity.ok(controlador.getEdificiosConUnidades());
 	}
 
 	@PostMapping()
@@ -60,8 +60,8 @@ public class EdificioController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateEdificio(@RequestBody Edificio edificio, @PathVariable int codigo){
-		return ResponseEntity.status(HttpStatus.CREATED).body(controlador.actualizarEdificio(edificio,codigo));
+	public ResponseEntity<?> updateEdificio(@PathVariable int id, @RequestBody Edificio edificio){
+		return ResponseEntity.status(HttpStatus.CREATED).body(controlador.actualizarEdificio(edificio,id));
 	}
 	
 	@DeleteMapping("/{id}")

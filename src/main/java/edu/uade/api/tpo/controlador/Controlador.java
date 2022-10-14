@@ -54,6 +54,7 @@ public class Controlador {
 			edificioPorActualizar.setDireccion(edificio.getDireccion());
 			edificioPorActualizar.setNombre(edificio.getNombre());
 			edificioPorActualizar.setUnidades(edificio.getUnidades());
+			log.info(String.valueOf(edificioPorActualizar));
 		}
 		return edificioService.save(edificio);
 	}
@@ -62,7 +63,7 @@ public class Controlador {
 		edificioService.deleteById(codigo);
 	}
 	
-	public List<UnidadView> getUnidadesPorEdificio(int codigo) throws EdificioException{
+	/*public List<UnidadView> getUnidadesPorEdificio(int codigo) throws EdificioException{
 		List<UnidadView> resultado = new ArrayList<UnidadView>();
 		Edificio edificio = buscarEdificio(codigo);
 		List<Unidad> unidades = edificio.getUnidades();
@@ -78,9 +79,9 @@ public class Controlador {
 		for(Persona persona : habilitados)
 			resultado.add(persona.toView());
 		return resultado;
-	}
+	}*/
 
-	public List<PersonaView> dueniosPorEdificio(int codigo) throws EdificioException{
+	/*public List<PersonaView> dueniosPorEdificio(int codigo) throws EdificioException{
 		List<PersonaView> resultado = new ArrayList<PersonaView>();
 		Edificio edificio = buscarEdificio(codigo);
 		Set<Persona> duenios = edificio.duenios();
@@ -96,7 +97,7 @@ public class Controlador {
 		for(Persona persona : habitantes)
 			resultado.add(persona.toView());
 		return resultado;
-	}
+	}*/
 
 	public List<PersonaView> dueniosPorUnidad(int codigo, String piso, String numero) throws UnidadException{
 		List<PersonaView> resultado = new ArrayList<PersonaView>();
@@ -180,14 +181,14 @@ public class Controlador {
 		return resultado;
 	}
  
-	public int agregarReclamo(int codigo, String piso, String numero, String documento, String ubicacion, String descripcion) throws EdificioException, UnidadException, PersonaException {
+	/**public int agregarReclamo(int codigo, String piso, String numero, String documento, String ubicacion, String descripcion) throws EdificioException, UnidadException, PersonaException {
 		Edificio edificio = buscarEdificio(codigo);
 		Unidad unidad = buscarUnidad(codigo, piso, numero);
 		Persona persona = buscarPersona(documento);
 		Reclamo reclamo = new Reclamo(persona, edificio, ubicacion, descripcion, unidad);
 		reclamo.save();
 		return reclamo.getNumero();
-	}
+	}*/
 	
 	public void agregarImagenAReclamo(int numero, String direccion, String tipo) throws ReclamoException {
 		Reclamo reclamo = buscarReclamo(numero);
@@ -200,8 +201,8 @@ public class Controlador {
 		reclamo.update();
 	}
 	
-	public Edificio buscarEdificio(int codigo) throws EdificioException {
-		return edificioService.findById(codigo).orElse(null);
+	public EdificioView buscarEdificio(int codigo) throws EdificioException {
+		return edificioService.findById(codigo).orElse(null).toView();
 	}
 
 	private Unidad buscarUnidad(int codigo, String piso, String numero) throws UnidadException{

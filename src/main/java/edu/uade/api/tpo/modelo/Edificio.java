@@ -22,6 +22,7 @@ import lombok.ToString;
 
 @Entity
 @Table(name= "edificios")
+@ToString
 public class Edificio{
 	
 	@Id
@@ -29,7 +30,7 @@ public class Edificio{
 	private int codigo;
 	private String nombre;
 	private String direccion;
-	@OneToMany(fetch= FetchType.EAGER)
+	@OneToMany(fetch= FetchType.LAZY)
 	@JoinColumn(name="codigoEdificio")
 	private List<Unidad> unidades;
 	
