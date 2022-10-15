@@ -1,6 +1,7 @@
 package edu.uade.api.tpo.services.implemented;
 
 import java.awt.print.Pageable;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class PersonaServiceImpl implements IPersonaService {
 	@Autowired
 	private PersonaRepositorio repositorio;
 	@Override
-	public Iterable<Persona> findAll() {
+	public List<Persona> findAll() {
 		// TODO Auto-generated method stub
 		return repositorio.findAll();
 	}
@@ -40,6 +41,14 @@ public class PersonaServiceImpl implements IPersonaService {
 	public Persona save(Persona persona) {
 		// TODO Auto-generated method stub
 		return repositorio.save(persona);
+	}
+
+	@Override
+	public Persona update(Persona personaActualizada, String documento) {
+		Persona personaPorActualizar= repositorio.getReferenceById(documento);
+		personaPorActualizar.setNombre(personaActualizada.getNombre());
+
+		return repositorio.save(personaPorActualizar);
 	}
 
 	@Override

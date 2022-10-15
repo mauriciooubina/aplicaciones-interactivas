@@ -1,10 +1,11 @@
 package edu.uade.api.tpo.services.implemented;
 
 import java.awt.print.Pageable;
+import java.util.List;
 import java.util.Optional;
 
 
-
+import edu.uade.api.tpo.modelo.Edificio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -21,7 +22,7 @@ public class UnidadServiceImpl implements IUnidadService {
 	@Autowired
 	private UnidadRepositorio repositorio;
 	@Override
-	public Iterable<Unidad> findAll() {
+	public List<Unidad> findAll() {
 		// TODO Auto-generated method stub
 		return repositorio.findAll();
 	}
@@ -42,6 +43,15 @@ public class UnidadServiceImpl implements IUnidadService {
 	public Unidad save(Unidad unidad) {
 		// TODO Auto-generated method stub
 		return repositorio.save(unidad);
+	}
+
+	@Override
+	public Unidad update(Unidad unidadActualizada, int id) {
+		Unidad unidadPorActualizar= repositorio.findById(id).orElse(null);
+
+		unidadPorActualizar.setHabitado(unidadActualizada.estaHabitado());
+		unidadPorActualizar.setNumero(unidadActualizada.getNumero());
+		return repositorio.save(unidadPorActualizar);
 	}
 
 	@Override

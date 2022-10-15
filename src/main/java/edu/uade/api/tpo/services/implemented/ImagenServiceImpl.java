@@ -1,6 +1,7 @@
 package edu.uade.api.tpo.services.implemented;
 
 import java.awt.print.Pageable;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class ImagenServiceImpl implements IImagenService {
 	}
 
 	@Override
-	public Iterable<Imagen> findAll() {
+	public List<Imagen> findAll() {
 		// TODO Auto-generated method stub
 		return repositorio.findAll();
 	}
@@ -44,6 +45,14 @@ public class ImagenServiceImpl implements IImagenService {
 	public Imagen save(Imagen imagen) {
 		// TODO Auto-generated method stub
 		return repositorio.save(imagen);
+	}
+
+	@Override
+	public Imagen update(Imagen imagenActualizada, int id) {
+		Imagen imagenPorActualizar= repositorio.getReferenceById(id);
+		imagenPorActualizar.setDireccion(imagenActualizada.getDireccion());
+
+		return repositorio.save(imagenPorActualizar);
 	}
 
 	@Override

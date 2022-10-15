@@ -21,6 +21,8 @@ import edu.uade.api.tpo.views.EdificioView;
 import edu.uade.api.tpo.views.UnidadSinEdificioView;
 import edu.uade.api.tpo.views.UnidadView;
 import lombok.ToString;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Table(name="unidades")
@@ -35,6 +37,7 @@ public class Unidad {
 	private boolean habitado;
 	@ManyToOne
 	@JoinColumn(name="codigoEdificio")
+	@Cascade(CascadeType.LOCK)
 	private Edificio edificio;
 	
 	@OneToMany(fetch = FetchType.LAZY)

@@ -24,58 +24,44 @@ import edu.uade.api.tpo.services.implemented.UnidadServiceImpl;
 import edu.uade.api.tpo.views.ReclamoView;
 import edu.uade.api.tpo.views.UnidadView;
 
+import javax.websocket.server.PathParam;
+
 @RestController
 @RequestMapping("/api/reclamo")
 public class ReclamoController {
+	private final Controlador controlador;
+
 	@Autowired
-	ReclamoServiceImpl reclamoService;
-	
-	@GetMapping()
-	public List<ReclamoView> obtenerReclamos(){
-		List<ReclamoView> reclamos = new ArrayList<ReclamoView>();
-		Iterable<Reclamo> iterable =this.reclamoService.findAll();
-		for(Reclamo u : iterable) {
-			reclamos.add(u.toView());
-		}
-		return reclamos;
-	} 
-	
+	public ReclamoController(Controlador controlador){
+		this.controlador=controlador;
+	}
+	@GetMapping("/edificio")
+	public ResponseEntity<List<ReclamoView>> obtenerReclamosPorEdificio(@PathParam("edificio") int codigoEdificio){
+		return ResponseEntity.ok(controlador.reclamosPorEdificio(codigoEdificio));
+	}
+
+	@GetMapping("/unidad")
+	public ResponseEntity<List<ReclamoView>> obtenerReclamosPorUnidad(@PathParam("unidad") int codigoUnidad){
+		return ResponseEntity.ok(controlador.reclamosPorUnidad(codigoUnidad));
+	}
+
 	@PostMapping()
 	public ResponseEntity<?> guardarReclamo(@RequestBody Reclamo reclamo){
-		return ResponseEntity.status(HttpStatus.CREATED).body(reclamoService.save(reclamo));
+		return ResponseEntity.status(HttpStatus.CREATED).body(controlador.agregarReclamo(reclamo));
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> obtenerReclamoPorId(@PathVariable Integer id){
-		Optional<Reclamo> unidad = reclamoService.findById(id);
-		if(!unidad.isPresent())
-			return ResponseEntity.notFound().build();
-		return ResponseEntity.ok(unidad.get().toView());
+		return ResponseEntity.ok(controlador.reclamosPorNumero(id));
 	}
 	
-	@PutMapping("/{id}")
+	@PutMapping("/estado/{id}")
 	public ResponseEntity<?> updateReclamoPorId(@RequestBody Reclamo reclamo, @PathVariable(value = "id") Integer id){
-		Optional<Reclamo> oReclamo = reclamoService.findById(id);
-		if(!oReclamo.isPresent())
-			return ResponseEntity.notFound().build();
-		
-		oReclamo.get().setUsuario(reclamo.getUsuario());
-		oReclamo.get().setEdificio(reclamo.getEdificio());
-		oReclamo.get().setUbicacion(reclamo.getUbicacion());
-		oReclamo.get().setDescripcion(reclamo.getDescripcion());
-		oReclamo.get().setUnidad(reclamo.getUnidad());
-		oReclamo.get().cambiarEstado(reclamo.getEstado());
-		oReclamo.get().setImagenes(reclamo.getImagenes());
-		
-		return ResponseEntity.status(HttpStatus.CREATED).body(reclamoService.save(oReclamo.get()));
+		return ResponseEntity.status(HttpStatus.CREATED).body(controlador.actualizarReclamo(reclamo,id));
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> eliminarReclamoPorId(@PathVariable(value = "id") Integer id){
-		if(!reclamoService.findById(id).isPresent())
-			return ResponseEntity.notFound().build();
-		
-		reclamoService.deleteById(id);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.accepted().body(eliminarReclamoPorId(id));
 	}
 }

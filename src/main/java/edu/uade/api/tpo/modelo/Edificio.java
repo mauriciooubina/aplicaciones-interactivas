@@ -18,6 +18,8 @@ import edu.uade.api.tpo.views.EdificioConUnidadesView;
 import edu.uade.api.tpo.views.EdificioView;
 import edu.uade.api.tpo.views.UnidadSinEdificioView;
 import lombok.ToString;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 
 @Entity
@@ -32,6 +34,7 @@ public class Edificio{
 	private String direccion;
 	@OneToMany(fetch= FetchType.LAZY)
 	@JoinColumn(name="codigoEdificio")
+	@Cascade(CascadeType.SAVE_UPDATE)
 	private List<Unidad> unidades;
 	
 	public Edificio() {}
