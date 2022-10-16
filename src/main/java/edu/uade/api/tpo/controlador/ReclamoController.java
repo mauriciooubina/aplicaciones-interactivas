@@ -1,30 +1,15 @@
 package edu.uade.api.tpo.controlador;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
+import edu.uade.api.tpo.exceptions.ReclamoException;
+import edu.uade.api.tpo.modelo.Reclamo;
+import edu.uade.api.tpo.views.Estado;
+import edu.uade.api.tpo.views.ReclamoView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import edu.uade.api.tpo.modelo.Reclamo;
-import edu.uade.api.tpo.modelo.Unidad;
-import edu.uade.api.tpo.services.implemented.ReclamoServiceImpl;
-import edu.uade.api.tpo.services.implemented.UnidadServiceImpl;
-import edu.uade.api.tpo.views.ReclamoView;
-import edu.uade.api.tpo.views.UnidadView;
+import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/reclamo")
@@ -35,13 +20,13 @@ public class ReclamoController {
 	public ReclamoController(Controlador controlador){
 		this.controlador=controlador;
 	}
-	@GetMapping("/edificio")
-	public ResponseEntity<List<ReclamoView>> obtenerReclamosPorEdificio(@PathParam("edificio") int codigoEdificio){
+	@GetMapping("/edificio/{id}")
+	public ResponseEntity<List<ReclamoView>> obtenerReclamosPorEdificio(@PathVariable("id") int codigoEdificio){
 		return ResponseEntity.ok(controlador.reclamosPorEdificio(codigoEdificio));
 	}
 
-	@GetMapping("/unidad")
-	public ResponseEntity<List<ReclamoView>> obtenerReclamosPorUnidad(@PathParam("unidad") int codigoUnidad){
+	@GetMapping("/unidad/{id}")
+	public ResponseEntity<List<ReclamoView>> obtenerReclamosPorUnidad(@PathVariable("id") int codigoUnidad){
 		return ResponseEntity.ok(controlador.reclamosPorUnidad(codigoUnidad));
 	}
 
@@ -63,5 +48,32 @@ public class ReclamoController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> eliminarReclamoPorId(@PathVariable(value = "id") Integer id){
 		return ResponseEntity.accepted().body(eliminarReclamoPorId(id));
+	}
+
+	@GetMapping("/personas/DNI/{documento}")
+	public ResponseEntity<?> reclamosPorDni(@PathVariable String documento){
+		return ResponseEntity.ok(controlador.reclamosPorPersona("DNI".concat(documento)));
+	}
+
+	@GetMapping("/personas/CI/{documento}")
+	public ResponseEntity<?> reclamosPorCi(@PathVariable String documento){
+		return ResponseEntity.ok(controlador.reclamosPorPersona("CI ".concat(documento)));
+	}
+
+	@GetMapping("/personas/CPA/{documento}")
+	public ResponseEntity<?> reclamosPorCpa(@PathVariable String documento){
+		return ResponseEntity.ok(controlador.reclamosPorPersona("CPA".concat(documento)));
+	}
+
+	@PutMapping("/agregar-imagen/{reclamo}")
+	public ResponseEntity<?> agregarImagen(@PathVariable("reclamo") int idReclamo, @RequestParam("url") String url, @RequestParam("tipo") String tipo) throws ReclamoException {
+		controlador.agregarImagenAReclamo(idReclamo,url,tipo);
+		return ResponseEntity.ok().build();
+	}
+
+	@PutMapping("/cambiar-estado/{reclamo}")
+	public ResponseEntity<?> cambiarEstado(@PathVariable("reclamo")int idReclamo, @RequestParam("estado") int estado) throws ReclamoException {
+		controlador.cambiarEstado(idReclamo, Estado.values()[estado]);
+		return ResponseEntity.ok().build();
 	}
 }

@@ -1,17 +1,16 @@
 package edu.uade.api.tpo.services.implemented;
 
-import java.awt.print.Pageable;
-import java.util.List;
-import java.util.Optional;
-
+import edu.uade.api.tpo.modelo.Persona;
+import edu.uade.api.tpo.repositorios.PersonaRepositorio;
+import edu.uade.api.tpo.services.interfaces.IPersonaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import edu.uade.api.tpo.modelo.Persona;
-import edu.uade.api.tpo.repositorios.PersonaRepositorio;
-import edu.uade.api.tpo.services.interfaces.IPersonaService;
+import java.awt.print.Pageable;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PersonaServiceImpl implements IPersonaService {
@@ -47,7 +46,8 @@ public class PersonaServiceImpl implements IPersonaService {
 	public Persona update(Persona personaActualizada, String documento) {
 		Persona personaPorActualizar= repositorio.getReferenceById(documento);
 		personaPorActualizar.setNombre(personaActualizada.getNombre());
-
+		personaPorActualizar.setEmail(personaActualizada.getEmail());
+		personaPorActualizar.setPassword(personaActualizada.getPassword());
 		return repositorio.save(personaPorActualizar);
 	}
 

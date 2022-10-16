@@ -1,28 +1,10 @@
 package edu.uade.api.tpo;
 
-import java.util.List;
-import java.util.Optional;
-
+import edu.uade.api.tpo.services.implemented.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import edu.uade.api.tpo.modelo.Edificio;
-import edu.uade.api.tpo.modelo.Imagen;
-import edu.uade.api.tpo.modelo.Persona;
-import edu.uade.api.tpo.modelo.Reclamo;
-import edu.uade.api.tpo.modelo.Unidad;
-import edu.uade.api.tpo.repositorios.EdificioRepositorio;
-import edu.uade.api.tpo.repositorios.ImagenRepositorio;
-import edu.uade.api.tpo.repositorios.PersonaRepositorio;
-import edu.uade.api.tpo.repositorios.ReclamoRepositorio;
-import edu.uade.api.tpo.repositorios.UnidadRepositorio;
-import edu.uade.api.tpo.services.implemented.EdificioServiceImpl;
-import edu.uade.api.tpo.services.implemented.ImagenServiceImpl;
-import edu.uade.api.tpo.services.implemented.PersonaServiceImpl;
-import edu.uade.api.tpo.services.implemented.ReclamoServiceImpl;
-import edu.uade.api.tpo.services.implemented.UnidadServiceImpl;
 
 @SpringBootApplication
 public class TPOApp {

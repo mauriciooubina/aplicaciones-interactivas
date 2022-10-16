@@ -1,52 +1,45 @@
 package edu.uade.api.tpo.modelo;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
+import edu.uade.api.tpo.views.PersonaSinRolView;
 import edu.uade.api.tpo.views.PersonaView;
+import lombok.*;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name="personas")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
 public class Persona {
 
 	@Id
 	private String documento;
 	private String nombre;
+
+	private String email;
+
+	@Column(name="pass")
+	private String password;
+
+	@Enumerated(EnumType.ORDINAL)
+	private Rol rol;
 	
-	public Persona() {}
-	
-	public Persona(String documento, String nombre) {
+	public Persona(String nombre, String email, String password,Rol rol) {
 		this.documento = documento;
 		this.nombre = nombre;
-	}
-
-	public String getDocumento() {
-		return documento;
-	}
-	
-	public void setDocumento(String documento) {
-		this.documento = documento;
-	}
-
-
-	public String getNombre() {
-		return nombre;
-	}
-	
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+		this.email=email;
+		this.password=password;
+		this.rol=rol;
 	}
 
 	public PersonaView toView() {
-		return new PersonaView(documento, nombre);
+		return new PersonaView(documento, nombre,email, rol);
 	}
 
-	public void save() {
-		
+	public PersonaSinRolView toViewSinRol() {
+		return new PersonaSinRolView(documento,nombre,email);
 	}
-
-	public void delete() {
-		
-	}	
 }

@@ -1,21 +1,19 @@
 package edu.uade.api.tpo.controlador;
 
-import java.util.*;
-
 import edu.uade.api.tpo.exceptions.EdificioException;
 import edu.uade.api.tpo.exceptions.PersonaException;
 import edu.uade.api.tpo.exceptions.ReclamoException;
 import edu.uade.api.tpo.exceptions.UnidadException;
-import edu.uade.api.tpo.modelo.Edificio;
-import edu.uade.api.tpo.modelo.Persona;
-import edu.uade.api.tpo.modelo.Reclamo;
-import edu.uade.api.tpo.modelo.Unidad;
-import edu.uade.api.tpo.services.implemented.EdificioServiceImpl;
+import edu.uade.api.tpo.modelo.*;
 import edu.uade.api.tpo.services.interfaces.*;
 import edu.uade.api.tpo.views.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 
 @Controller
@@ -80,12 +78,8 @@ public class Controlador {
 	}
 	
 	public List<PersonaView> habilitadosPorEdificio(int codigo) throws EdificioException{
-		List<PersonaView> resultado = new ArrayList<PersonaView>();
 		Edificio edificio = buscarEdificioCompleto(codigo);
-		Set<Persona> habilitados = edificio.habilitados();
-		for(Persona persona : habilitados)
-			resultado.add(persona.toView());
-		return resultado;
+		return edificio.habilitados().stream().map(Persona::toView).toList();
 	}
 
 	private Edificio buscarEdificioCompleto(int codigo){
@@ -107,58 +101,50 @@ public class Controlador {
 		return unidad.getDuenios().stream().map(Persona::toView).toList();
 	}
 
-	public List<PersonaView> inquilinosPorUnidad(int codigo, String piso, String numero) throws UnidadException{
+	public List<PersonaView> inquilinosPorUnidad(int codigo) throws UnidadException{
 		Unidad unidad =  buscarUnidadCompleto(codigo);
 		return unidad.getInquilinos().stream().map(Persona::toView).toList();
 	}
 	
-	public void transferirUnidad(int codigo, String documento) throws UnidadException, PersonaException {
-		Unidad unidad = buscarUnidadCompleto(codigo);
-		Persona persona = buscarPersona(documento);
+	public void transferirUnidad(UnidadPersona unidadPersona) throws UnidadException, PersonaException {
+		Unidad unidad = buscarUnidadCompleto(unidadPersona.getCodigoUnidad());
+		Persona persona = buscarPersona(unidadPersona.getDocumento());
 		unidad.transferir(persona);
 		unidadService.update(unidad,unidad.getId());
 	}
 
-	public void agregarDuenioUnidad(int codigo, String documento) throws UnidadException, PersonaException {
-		Unidad unidad = buscarUnidadCompleto(codigo);
-		Persona persona = buscarPersona(documento);
+	public void agregarDuenioUnidad(UnidadPersona unidadPersona) throws UnidadException, PersonaException {
+		Unidad unidad = buscarUnidadCompleto(unidadPersona.getCodigoUnidad());
+		Persona persona = buscarPersona(unidadPersona.getDocumento());
 		unidad.agregarDuenio(persona);
 		unidadService.update(unidad, unidad.getId());
 	}
 
-	public void alquilarUnidad(int codigo, String documento) throws UnidadException, PersonaException{
-		Unidad unidad = buscarUnidadCompleto(codigo);
-		Persona persona = buscarPersona(documento);
-		unidad.alquilar(persona);
+	public void agregarInquilinoUnidad(UnidadPersona unidadPersona) throws UnidadException, PersonaException{
+		Unidad unidad = buscarUnidadCompleto(unidadPersona.getCodigoUnidad());
+		Persona persona = buscarPersona(unidadPersona.getDocumento());
+		if(unidad.getInquilinos().isEmpty()){
+			unidad.alquilar(persona);
+		}else{
+			unidad.agregarInquilino(persona);
+		}
 		unidadService.update(unidad, unidad.getId());
 	}
 
-	public void agregarInquilinoUnidad(int codigo, String piso, String numero, String documento) throws UnidadException, PersonaException{
-		Unidad unidad = buscarUnidadCompleto(codigo);
-		Persona persona = buscarPersona(documento);
-		unidad.agregarInquilino(persona);
-		unidadService.update(unidad, unidad.getId());
-	}
-
-	public void liberarUnidad(int codigo, String piso, String numero) throws UnidadException {
+	public void liberarUnidad(int codigo) throws UnidadException {
 		Unidad unidad = buscarUnidadCompleto(codigo);
 		unidad.liberar();
 		unidadService.update(unidad, unidad.getId());
 	}
 	
-	public void habitarUnidad(int codigo, String piso, String numero) throws UnidadException {
+	public void habitarUnidad(int codigo) throws UnidadException {
 		Unidad unidad = buscarUnidadCompleto(codigo);
 		unidad.habitar();
 		unidadService.update(unidad, unidad.getId());
 	}
 	
-	public void agregarPersona(String documento, String nombre) {
-		personaService.save(new Persona(documento, nombre));
-	}
-	
-	public void eliminarPersona(String documento) throws PersonaException {
-		Persona persona = buscarPersona(documento);
-		personaService.deleteById(documento);
+	public PersonaView agregarPersona(Persona persona) {
+		return personaService.save(persona).toView();
 	}
 	
 	public List<ReclamoView> reclamosPorEdificio(int codigo){
@@ -177,15 +163,6 @@ public class Controlador {
 		List<ReclamoView> resultado = new ArrayList<ReclamoView>();
 		return resultado;
 	}
- 
-	public int agregarReclamo(int codigoEdificio, int codigoUnidad, String documento, String ubicacion, String descripcion) throws EdificioException, UnidadException, PersonaException {
-		Edificio edificio = buscarEdificioCompleto(codigoEdificio);
-		Unidad unidad = buscarUnidadCompleto(codigoUnidad);
-		Persona persona = buscarPersona(documento);
-		Reclamo reclamo = new Reclamo(persona, edificio, ubicacion, descripcion, unidad);
-		reclamoService.save(reclamo);
-		return reclamo.getNumero();
-	}
 	public Reclamo agregarReclamo(Reclamo reclamo){
 		return reclamoService.save(reclamo);
 	}
@@ -198,8 +175,7 @@ public class Controlador {
 	
 	public void cambiarEstado(int numero, Estado estado) throws ReclamoException {
 		Reclamo reclamo = buscarReclamo(numero);
-		reclamo.cambiarEstado(estado);
-		reclamo.update();
+		reclamo.setEstado(estado);
 	}
 	
 	public EdificioView buscarEdificio(int codigo) throws EdificioException {
@@ -210,7 +186,7 @@ public class Controlador {
 		return unidadService.findById(codigo).orElse(null).toView();
 	}
 	
-	private Persona buscarPersona(String documento) throws PersonaException {
+	public Persona buscarPersona(String documento) throws PersonaException {
 		return personaService.findById(documento).orElseGet(null);
 	}
 	
@@ -224,5 +200,33 @@ public class Controlador {
 
 	public ReclamoView actualizarReclamo(Reclamo reclamo,int id){
 		return reclamoService.update(reclamo,id).toView();
+	}
+
+	public PersonaView validarPassword(Persona persona) throws PersonaException {
+		Persona usuarioValidado= buscarPersona(persona.getDocumento());
+		if(usuarioValidado==null || !(usuarioValidado.getPassword().equals(persona.getPassword()))){
+			return new PersonaView();
+		}else{
+			return usuarioValidado.toView();
+		}
+	}
+
+	public PersonaView actualizarPersona(Persona persona, String documento) {
+		return personaService.update(persona, documento).toView();
+	}
+
+	public PersonaConUnidadesView obtenerPersonaConUnidades(String documento){
+		List<UnidadView> duenioDe= new ArrayList<>();
+		List<UnidadView> inquilindoDe= new ArrayList<>();
+		List<Unidad> unidades= unidadService.findAll();
+		Persona persona= personaService.findById(documento).orElse(null);
+		unidades.forEach(unidad-> {
+			if(unidad.getDuenios().stream().filter(d -> d.getDocumento().equals(persona.getDocumento())).count()==1){
+				duenioDe.add(unidad.toView());
+			}else if(unidad.getInquilinos().stream().filter(i -> i.getDocumento().equals(persona.getDocumento())).count()==1){
+				inquilindoDe.add(unidad.toView());
+			}
+		});
+		return new PersonaConUnidadesView(persona,duenioDe,inquilindoDe);
 	}
 }

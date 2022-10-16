@@ -1,29 +1,22 @@
 package edu.uade.api.tpo.modelo;
 
-import java.util.ArrayList;
+import edu.uade.api.tpo.views.EdificioConUnidadesView;
+import edu.uade.api.tpo.views.EdificioView;
+import edu.uade.api.tpo.views.UnidadSinEdificioView;
+import lombok.*;
+
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import edu.uade.api.tpo.views.EdificioConUnidadesView;
-import edu.uade.api.tpo.views.EdificioView;
-import edu.uade.api.tpo.views.UnidadSinEdificioView;
-import lombok.ToString;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
 
 @Entity
 @Table(name= "edificios")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @ToString
 public class Edificio{
 	
@@ -34,18 +27,15 @@ public class Edificio{
 	private String direccion;
 	@OneToMany(fetch= FetchType.LAZY)
 	@JoinColumn(name="codigoEdificio")
-	@Cascade(CascadeType.SAVE_UPDATE)
 	private List<Unidad> unidades;
-	
-	public Edificio() {}
-	
-	public Edificio(int codigo, String nombre, String direccion) {
-		this.codigo = codigo;
+
+
+	public Edificio(String nombre, String direccion, List<Unidad> unidades) {
 		this.nombre = nombre;
 		this.direccion = direccion;
-		unidades = new ArrayList<Unidad>();
+		this.unidades = unidades;
 	}
-	
+
 	public void agregarUnidad(Unidad unidad) {
 		unidades.add(unidad);
 	}
@@ -61,30 +51,6 @@ public class Edificio{
 				habilitados.add(p);
 		}
 		return habilitados;
-	}
-
-	public int getCodigo() {
-		return codigo;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-	
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public String getDireccion() {
-		return direccion;
-	}
-	
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
-	}
-
-	public List<Unidad> getUnidades() {
-		return unidades;
 	}
 
 	public Set<Persona> duenios() {
@@ -115,9 +81,6 @@ public class Edificio{
 		return resultado;
 	}
 
-	public void setUnidades(List<Unidad> unidades) {
-		this.unidades = unidades;
-	}
 
 	public EdificioView toView() {
 		return new EdificioView(codigo, nombre, direccion);

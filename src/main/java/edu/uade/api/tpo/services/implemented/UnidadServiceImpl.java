@@ -1,20 +1,16 @@
 package edu.uade.api.tpo.services.implemented;
 
-import java.awt.print.Pageable;
-import java.util.List;
-import java.util.Optional;
-
-
-import edu.uade.api.tpo.modelo.Edificio;
+import edu.uade.api.tpo.modelo.Unidad;
+import edu.uade.api.tpo.repositorios.UnidadRepositorio;
+import edu.uade.api.tpo.services.interfaces.IUnidadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import edu.uade.api.tpo.modelo.Unidad;
-import edu.uade.api.tpo.repositorios.UnidadRepositorio;
-import edu.uade.api.tpo.services.interfaces.IUnidadService;
+import java.awt.print.Pageable;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UnidadServiceImpl implements IUnidadService {

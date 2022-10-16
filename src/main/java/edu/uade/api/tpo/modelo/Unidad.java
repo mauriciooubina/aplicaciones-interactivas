@@ -1,31 +1,25 @@
 package edu.uade.api.tpo.modelo;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import edu.uade.api.tpo.exceptions.UnidadException;
 import edu.uade.api.tpo.views.EdificioView;
 import edu.uade.api.tpo.views.UnidadSinEdificioView;
 import edu.uade.api.tpo.views.UnidadView;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name="unidades")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+
 public class Unidad {
 
 	@Id
@@ -55,12 +49,9 @@ public class Unidad {
 			@JoinColumn(name="documento")
 	})
 	private List<Persona> inquilinos;
-	
-	
-	public Unidad() {}
-	
-	public Unidad(int id, String piso, String numero, Edificio edificio) {
-		this.id = id;
+
+
+	public Unidad(String piso, String numero, Edificio edificio) {
 		this.piso = piso;
 		this.numero = numero;
 		this.habitado = false;
@@ -107,50 +98,6 @@ public class Unidad {
 		else
 			this.habitado = true;
 	}
-	
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id){this.id=id;}
-
-	public String getPiso() {
-		return piso;
-	}
-	
-	public void setPiso(String piso) {
-		this.piso = piso;
-	}
-
-	public String getNumero() {
-		return numero;
-	}
-	
-	public void setNumero(String numero) {
-		this.numero = numero;
-	}
-	
-	public void setHabitado(boolean habitado) {
-		this.habitado = habitado;
-	}
-
-	
-	public Edificio getEdificio() {
-		return edificio;
-	}
-
-	public void setEdificio(Edificio edificio) {
-		this.edificio = edificio;
-	}
-	
-	public List<Persona> getDuenios() {
-		return duenios;
-	}
-
-	public List<Persona> getInquilinos() {
-		return inquilinos;
-	}
-
 	public UnidadView toView() {
 		EdificioView auxEdificio = edificio.toView();
 		return new UnidadView(id, piso, numero, habitado, auxEdificio);
@@ -158,9 +105,5 @@ public class Unidad {
 
 	public UnidadSinEdificioView toViewSinEdificios(){
 		return new UnidadSinEdificioView(id,piso,numero,habitado);
-	}
-
-	public String toString(){
-		return "Unidad= {numero= " + this.numero +", piso= " + this.piso + ", edificio= " + this.edificio.getDireccion() +"}";
 	}
 }
