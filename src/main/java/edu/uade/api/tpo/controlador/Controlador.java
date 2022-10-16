@@ -173,9 +173,14 @@ public class Controlador {
 		reclamoService.update(reclamo,reclamo.getNumero());
 	}
 	
-	public void cambiarEstado(int numero, Estado estado) throws ReclamoException {
+	public void cambiarEstado(int numero, EstadoMedidas estadoMedidas) throws ReclamoException {
 		Reclamo reclamo = buscarReclamo(numero);
-		reclamo.setEstado(estado);
+		reclamo.setEstado(Estado.values()[estadoMedidas.getEstado()]);
+		if(estadoMedidas.getMedidas()!=null && estadoMedidas.getMedidas().length()>0){
+			String medidas= reclamo.getDescripcion().concat("\n"+estadoMedidas.getMedidas());
+			reclamo.setDescripcion(medidas);
+		}
+		reclamoService.update(reclamo,numero);
 	}
 	
 	public EdificioView buscarEdificio(int codigo) throws EdificioException {

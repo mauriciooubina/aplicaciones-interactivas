@@ -1,6 +1,7 @@
 package edu.uade.api.tpo.controlador;
 
 import edu.uade.api.tpo.exceptions.ReclamoException;
+import edu.uade.api.tpo.modelo.EstadoMedidas;
 import edu.uade.api.tpo.modelo.Reclamo;
 import edu.uade.api.tpo.views.Estado;
 import edu.uade.api.tpo.views.ReclamoView;
@@ -40,11 +41,6 @@ public class ReclamoController {
 		return ResponseEntity.ok(controlador.reclamosPorNumero(id));
 	}
 	
-	@PutMapping("/estado/{id}")
-	public ResponseEntity<?> updateReclamoPorId(@RequestBody Reclamo reclamo, @PathVariable(value = "id") Integer id){
-		return ResponseEntity.status(HttpStatus.CREATED).body(controlador.actualizarReclamo(reclamo,id));
-	}
-	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> eliminarReclamoPorId(@PathVariable(value = "id") Integer id){
 		return ResponseEntity.accepted().body(eliminarReclamoPorId(id));
@@ -72,8 +68,8 @@ public class ReclamoController {
 	}
 
 	@PutMapping("/cambiar-estado/{reclamo}")
-	public ResponseEntity<?> cambiarEstado(@PathVariable("reclamo")int idReclamo, @RequestParam("estado") int estado) throws ReclamoException {
-		controlador.cambiarEstado(idReclamo, Estado.values()[estado]);
+	public ResponseEntity<?> cambiarEstado(@PathVariable("reclamo")int idReclamo, @RequestBody EstadoMedidas estadoMedidas) throws ReclamoException {
+		controlador.cambiarEstado(idReclamo, estadoMedidas);
 		return ResponseEntity.ok().build();
 	}
 }
