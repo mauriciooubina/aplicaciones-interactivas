@@ -169,8 +169,8 @@ public class Controlador {
 	public Reclamo agregarReclamo(Reclamo reclamo) throws ReclamoException {
 		if(reclamo.getUnidad()==null){
 			AtomicBoolean habitanteEnEdificio= new AtomicBoolean(false);
-
-			reclamo.getEdificio().getUnidades().forEach(unidad -> {
+			Edificio edificio= buscarEdificioCompleto(reclamo.getEdificio().getCodigo());
+			edificio.getUnidades().forEach(unidad -> {
 				if(personaEnUnidad(unidad,reclamo.getUsuario())){
 					habitanteEnEdificio.set(true);
 				}
@@ -180,18 +180,19 @@ public class Controlador {
 				throw new ReclamoException("Usuario no perteneciente al edificio");
 			}
 		}else{
-			if(reclamo.getUnidad().getInquilinos().size()>0 && !(reclamo.getUnidad().getInquilinos().contains(reclamo.getUsuario()))){
+			Unidad unidad= buscarUnidadCompleto(reclamo.getUnidad().getId());
+			if(unidad.getInquilinos().size()>0 && !(unidad.esInquilino(reclamo.getUsuario()))){
 				throw new ReclamoException("Solo puede generar el reclamo un inquilino");
-			}else if(!(reclamo.getUnidad().getDuenios().contains(reclamo.getUsuario()))){
+			}else if(unidad.getInquilinos().size()==0 && !(unidad.esDuenio(reclamo.getUsuario()))){
 				throw new ReclamoException("Persona no relacionada a la unidad adjunta");
 			}
 		}
 		return reclamoService.save(reclamo);
 	}
 	
-	public void agregarImagenAReclamo(int numero, String direccion, String tipo) throws ReclamoException {
+	public void agregarImagenAReclamo(int numero, List<Imagen> imagenes) throws ReclamoException {
 		Reclamo reclamo = buscarReclamo(numero);
-		reclamo.agregarImagen(direccion, tipo);
+		imagenes.forEach(imagen -> reclamo.agregarImagen(imagen.getDireccion(),imagen.getTipo()));
 		reclamoService.update(reclamo,reclamo.getNumero());
 	}
 	

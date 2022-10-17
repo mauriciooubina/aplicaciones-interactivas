@@ -2,6 +2,7 @@ package edu.uade.api.tpo.controlador;
 
 import edu.uade.api.tpo.exceptions.ReclamoException;
 import edu.uade.api.tpo.modelo.EstadoMedidas;
+import edu.uade.api.tpo.modelo.Imagen;
 import edu.uade.api.tpo.modelo.Reclamo;
 import edu.uade.api.tpo.views.ReclamoView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +62,8 @@ public class ReclamoController {
 	}
 
 	@PutMapping("/agregar-imagen/{reclamo}")
-	public ResponseEntity<?> agregarImagen(@PathVariable("reclamo") int idReclamo, @RequestParam("url") String url, @RequestParam("tipo") String tipo) throws ReclamoException {
-		controlador.agregarImagenAReclamo(idReclamo,url,tipo);
+	public ResponseEntity<?> agregarImagen(@PathVariable("reclamo") int idReclamo, @RequestBody List<Imagen> imagenes) throws ReclamoException {
+		controlador.agregarImagenAReclamo(idReclamo, imagenes);
 		return ResponseEntity.ok().build();
 	}
 
