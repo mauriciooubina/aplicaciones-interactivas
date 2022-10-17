@@ -54,7 +54,7 @@ public class UnidadController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/agregar-inquilindo")
+	@PostMapping("/agregar-inquilino")
 	public ResponseEntity<?> agregarInquilino(@RequestBody UnidadPersona unidadPersona) throws PersonaException, UnidadException {
 		controlador.agregarInquilinoUnidad(unidadPersona);
 		return ResponseEntity.ok().build();

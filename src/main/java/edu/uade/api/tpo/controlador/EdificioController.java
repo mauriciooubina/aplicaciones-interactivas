@@ -70,4 +70,9 @@ public class EdificioController {
 	public ResponseEntity<?> obtenerDueniosPorEdificio(@PathVariable("id") int codigo) throws EdificioException {
 		return ResponseEntity.ok(controlador.dueniosPorEdificio(codigo));
 	}
+
+	@GetMapping("/unidades/{id}")
+	public ResponseEntity<?> obtenerUnidadesPorEdificio(@PathVariable("id")int codigo){
+		return ResponseEntity.ok(controlador.obtenerUnidadesPorEdificio(codigo));
+	}
 }

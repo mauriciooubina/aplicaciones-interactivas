@@ -234,4 +234,10 @@ public class Controlador {
 		});
 		return new PersonaConUnidadesView(persona,duenioDe,inquilindoDe);
 	}
+
+	public List<UnidadSinEdificioView> obtenerUnidadesPorEdificio(int codigoEdificio){
+		Edificio edificio= edificioService.findById(codigoEdificio).orElseGet(null);
+
+		return edificio.getUnidades().stream().map(Unidad::toViewSinEdificios).toList();
+	}
 }
