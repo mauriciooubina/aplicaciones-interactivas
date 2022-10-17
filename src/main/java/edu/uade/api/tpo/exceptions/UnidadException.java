@@ -1,6 +1,6 @@
 package edu.uade.api.tpo.exceptions;
 
-public class UnidadException extends Exception {
+public class UnidadException extends RuntimeException {
 
 	private static final long serialVersionUID = -1690698840733203643L;
 

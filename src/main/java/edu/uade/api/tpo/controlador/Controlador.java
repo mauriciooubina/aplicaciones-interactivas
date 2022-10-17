@@ -5,7 +5,10 @@ import edu.uade.api.tpo.exceptions.PersonaException;
 import edu.uade.api.tpo.exceptions.ReclamoException;
 import edu.uade.api.tpo.exceptions.UnidadException;
 import edu.uade.api.tpo.modelo.*;
-import edu.uade.api.tpo.services.interfaces.*;
+import edu.uade.api.tpo.services.interfaces.IEdificioService;
+import edu.uade.api.tpo.services.interfaces.IPersonaService;
+import edu.uade.api.tpo.services.interfaces.IReclamoService;
+import edu.uade.api.tpo.services.interfaces.IUnidadService;
 import edu.uade.api.tpo.views.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,7 @@ import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @Controller
@@ -27,15 +30,12 @@ public class Controlador {
 	private final IPersonaService personaService;
 
 	private final IReclamoService reclamoService;
-
-	private final IImagenService imagenService;
 	@Autowired
-	private Controlador(IEdificioService edificioService, IUnidadService unidadService,IPersonaService personaService, IReclamoService reclamoService, IImagenService imagenService) {
+	private Controlador(IEdificioService edificioService, IUnidadService unidadService,IPersonaService personaService, IReclamoService reclamoService) {
 		this.edificioService=edificioService;
 		this.unidadService=unidadService;
 		this.personaService=personaService;
 		this.reclamoService= reclamoService;
-		this.imagenService= imagenService;
 	}
 
 	
@@ -82,8 +82,8 @@ public class Controlador {
 		return edificio.habilitados().stream().map(Persona::toView).toList();
 	}
 
-	private Edificio buscarEdificioCompleto(int codigo){
-		return edificioService.findById(codigo).orElseGet(null);
+	private Edificio buscarEdificioCompleto(int codigo) throws EdificioException{
+		return edificioService.findById(codigo).orElseThrow(() -> new EdificioException("Edificio no encontrado"));
 	}
 
 	public List<PersonaView> dueniosPorEdificio(int codigo) throws EdificioException{
@@ -126,7 +126,11 @@ public class Controlador {
 		if(unidad.getInquilinos().isEmpty()){
 			unidad.alquilar(persona);
 		}else{
-			unidad.agregarInquilino(persona);
+			if(!unidad.getInquilinos().contains(persona)) {
+				unidad.agregarInquilino(persona);
+			}else{
+				throw new UnidadException("Inquilino previamente agregado");
+			}
 		}
 		unidadService.update(unidad, unidad.getId());
 	}
@@ -155,15 +159,33 @@ public class Controlador {
 		return reclamoService.findAll().stream().filter(r -> r.getUnidad().getId()==codigo).map(Reclamo::toView).toList();
 	}
 	
-	public ReclamoView reclamosPorNumero(int numero) {
-		return reclamoService.findById(numero).orElseGet(null).toView();
+	public ReclamoView reclamosPorNumero(int numero) throws ReclamoException {
+		return reclamoService.findById(numero).orElseThrow(() -> new ReclamoException("Reclamo no encontrado")).toView();
 	}
 	
 	public List<ReclamoView> reclamosPorPersona(String documento) {
-		List<ReclamoView> resultado = new ArrayList<ReclamoView>();
-		return resultado;
+		return reclamoService.findAll().stream().filter(r -> r.getUsuario().getDocumento().equals(documento)).map(Reclamo::toView).toList();
 	}
-	public Reclamo agregarReclamo(Reclamo reclamo){
+	public Reclamo agregarReclamo(Reclamo reclamo) throws ReclamoException {
+		if(reclamo.getUnidad()==null){
+			AtomicBoolean habitanteEnEdificio= new AtomicBoolean(false);
+
+			reclamo.getEdificio().getUnidades().forEach(unidad -> {
+				if(personaEnUnidad(unidad,reclamo.getUsuario())){
+					habitanteEnEdificio.set(true);
+				}
+			});
+
+			if(!habitanteEnEdificio.get()){
+				throw new ReclamoException("Usuario no perteneciente al edificio");
+			}
+		}else{
+			if(reclamo.getUnidad().getInquilinos().size()>0 && !(reclamo.getUnidad().getInquilinos().contains(reclamo.getUsuario()))){
+				throw new ReclamoException("Solo puede generar el reclamo un inquilino");
+			}else if(!(reclamo.getUnidad().getDuenios().contains(reclamo.getUsuario()))){
+				throw new ReclamoException("Persona no relacionada a la unidad adjunta");
+			}
+		}
 		return reclamoService.save(reclamo);
 	}
 	
@@ -177,34 +199,29 @@ public class Controlador {
 		Reclamo reclamo = buscarReclamo(numero);
 		reclamo.setEstado(Estado.values()[estadoMedidas.getEstado()]);
 		if(estadoMedidas.getMedidas()!=null && estadoMedidas.getMedidas().length()>0){
-			String medidas= reclamo.getDescripcion().concat("\n"+estadoMedidas.getMedidas());
-			reclamo.setDescripcion(medidas);
+			reclamo.setDescripcion(estadoMedidas.getMedidas());
 		}
 		reclamoService.update(reclamo,numero);
 	}
 	
 	public EdificioView buscarEdificio(int codigo) throws EdificioException {
-		return edificioService.findById(codigo).orElse(null).toView();
+		return edificioService.findById(codigo).orElseThrow(() -> new EdificioException("Edificio no encontrado")).toView();
 	}
 
 	public UnidadView buscarUnidadPorCodigo(int codigo) throws UnidadException{
-		return unidadService.findById(codigo).orElse(null).toView();
+		return unidadService.findById(codigo).orElseThrow(() -> new UnidadException("Unidad no encontrada")).toView();
 	}
-	
+
 	public Persona buscarPersona(String documento) throws PersonaException {
-		return personaService.findById(documento).orElseGet(null);
+		return personaService.findById(documento).orElseThrow(() -> new PersonaException("Persona no encontrada"));
 	}
 	
-	private Reclamo buscarReclamo(int numero) throws ReclamoException {
-		return null;
+	public Reclamo buscarReclamo(int numero) throws ReclamoException {
+		return reclamoService.findById(numero).orElseThrow(() -> new ReclamoException("Reclamo no encontrado"));
 	}
 
-	private Unidad buscarUnidadCompleto(int id){
-		return unidadService.findById(id).orElseGet(null);
-	}
-
-	public ReclamoView actualizarReclamo(Reclamo reclamo,int id){
-		return reclamoService.update(reclamo,id).toView();
+	public Unidad buscarUnidadCompleto(int id){
+		return unidadService.findById(id).orElseThrow(() -> new UnidadException("Unidad no encontrada"));
 	}
 
 	public PersonaView validarPassword(Persona persona) throws PersonaException {
@@ -220,11 +237,11 @@ public class Controlador {
 		return personaService.update(persona, documento).toView();
 	}
 
-	public PersonaConUnidadesView obtenerPersonaConUnidades(String documento){
+	public PersonaConUnidadesView obtenerPersonaConUnidades(String documento) throws PersonaException {
 		List<UnidadView> duenioDe= new ArrayList<>();
 		List<UnidadView> inquilindoDe= new ArrayList<>();
 		List<Unidad> unidades= unidadService.findAll();
-		Persona persona= personaService.findById(documento).orElse(null);
+		Persona persona= buscarPersona(documento);
 		unidades.forEach(unidad-> {
 			if(unidad.getDuenios().stream().filter(d -> d.getDocumento().equals(persona.getDocumento())).count()==1){
 				duenioDe.add(unidad.toView());
@@ -236,8 +253,12 @@ public class Controlador {
 	}
 
 	public List<UnidadSinEdificioView> obtenerUnidadesPorEdificio(int codigoEdificio){
-		Edificio edificio= edificioService.findById(codigoEdificio).orElseGet(null);
+		Edificio edificio= buscarEdificioCompleto(codigoEdificio);
 
 		return edificio.getUnidades().stream().map(Unidad::toViewSinEdificios).toList();
+	}
+
+	private boolean personaEnUnidad(Unidad unidad, Persona persona){
+		return (unidad.getInquilinos().contains(persona) || unidad.getDuenios().contains(persona));
 	}
 }

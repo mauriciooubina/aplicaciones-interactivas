@@ -2,6 +2,7 @@ package edu.uade.api.tpo.modelo;
 
 import edu.uade.api.tpo.views.*;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class Reclamo {
 	
 	@OneToMany
 	@JoinColumn(name="idReclamo")
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<Imagen> imagenes;
 
 	public Reclamo(Persona usuario, Edificio edificio, String ubicacion, String descripcion, Unidad unidad) {

@@ -1,7 +1,6 @@
 package edu.uade.api.tpo.controlador;
 
 import edu.uade.api.tpo.exceptions.EdificioException;
-import edu.uade.api.tpo.exceptions.UnidadException;
 import edu.uade.api.tpo.modelo.Edificio;
 import edu.uade.api.tpo.views.EdificioConUnidadesView;
 import edu.uade.api.tpo.views.EdificioView;

@@ -3,7 +3,6 @@ package edu.uade.api.tpo.controlador;
 import edu.uade.api.tpo.exceptions.ReclamoException;
 import edu.uade.api.tpo.modelo.EstadoMedidas;
 import edu.uade.api.tpo.modelo.Reclamo;
-import edu.uade.api.tpo.views.Estado;
 import edu.uade.api.tpo.views.ReclamoView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,12 +31,12 @@ public class ReclamoController {
 	}
 
 	@PostMapping()
-	public ResponseEntity<?> guardarReclamo(@RequestBody Reclamo reclamo){
+	public ResponseEntity<?> guardarReclamo(@RequestBody Reclamo reclamo) throws ReclamoException {
 		return ResponseEntity.status(HttpStatus.CREATED).body(controlador.agregarReclamo(reclamo));
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> obtenerReclamoPorId(@PathVariable Integer id){
+	public ResponseEntity<?> obtenerReclamoPorId(@PathVariable Integer id) throws ReclamoException {
 		return ResponseEntity.ok(controlador.reclamosPorNumero(id));
 	}
 	
