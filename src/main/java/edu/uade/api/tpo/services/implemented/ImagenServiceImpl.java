@@ -1,16 +1,16 @@
 package edu.uade.api.tpo.services.implemented;
 
-import java.awt.print.Pageable;
-import java.util.Optional;
-
+import edu.uade.api.tpo.modelo.Imagen;
+import edu.uade.api.tpo.repositorios.ImagenRepositorio;
+import edu.uade.api.tpo.services.interfaces.IImagenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import edu.uade.api.tpo.modelo.Imagen;
-import edu.uade.api.tpo.repositorios.ImagenRepositorio;
-import edu.uade.api.tpo.services.interfaces.IImagenService;
+import java.awt.print.Pageable;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ImagenServiceImpl implements IImagenService {
@@ -23,7 +23,7 @@ public class ImagenServiceImpl implements IImagenService {
 	}
 
 	@Override
-	public Iterable<Imagen> findAll() {
+	public List<Imagen> findAll() {
 		// TODO Auto-generated method stub
 		return repositorio.findAll();
 	}
@@ -44,6 +44,14 @@ public class ImagenServiceImpl implements IImagenService {
 	public Imagen save(Imagen imagen) {
 		// TODO Auto-generated method stub
 		return repositorio.save(imagen);
+	}
+
+	@Override
+	public Imagen update(Imagen imagenActualizada, int id) {
+		Imagen imagenPorActualizar= repositorio.getReferenceById(id);
+		imagenPorActualizar.setDireccion(imagenActualizada.getDireccion());
+
+		return repositorio.save(imagenPorActualizar);
 	}
 
 	@Override

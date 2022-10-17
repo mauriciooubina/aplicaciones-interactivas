@@ -1,16 +1,16 @@
 package edu.uade.api.tpo.services.implemented;
 
-import java.awt.print.Pageable;
-import java.util.Optional;
-
+import edu.uade.api.tpo.modelo.Reclamo;
+import edu.uade.api.tpo.repositorios.ReclamoRepositorio;
+import edu.uade.api.tpo.services.interfaces.IReclamoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import edu.uade.api.tpo.modelo.Reclamo;
-import edu.uade.api.tpo.repositorios.ReclamoRepositorio;
-import edu.uade.api.tpo.services.interfaces.IReclamoService;
+import java.awt.print.Pageable;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReclamoServiceImpl implements IReclamoService {
@@ -18,7 +18,7 @@ public class ReclamoServiceImpl implements IReclamoService {
 	@Autowired
 	private ReclamoRepositorio repositorio;
 	@Override
-	public Iterable<Reclamo> findAll() {
+	public List<Reclamo> findAll() {
 		// TODO Auto-generated method stub
 		return repositorio.findAll();
 	}
@@ -39,6 +39,16 @@ public class ReclamoServiceImpl implements IReclamoService {
 	public Reclamo save(Reclamo reclamo) {
 		// TODO Auto-generated method stub
 		return repositorio.save(reclamo);
+	}
+
+	@Override
+	public Reclamo update(Reclamo reclamoActualizado, int id) {
+		Reclamo reclamoPorActualizar= repositorio.getReferenceById(id);
+
+		reclamoPorActualizar.setDescripcion(reclamoActualizado.getDescripcion());
+		reclamoPorActualizar.setImagenes(reclamoActualizado.getImagenes());
+
+		return repositorio.save(reclamoPorActualizar);
 	}
 
 	@Override
