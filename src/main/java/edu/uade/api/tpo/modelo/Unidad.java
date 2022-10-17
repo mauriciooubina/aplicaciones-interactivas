@@ -11,6 +11,7 @@ import org.hibernate.annotations.CascadeType;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Entity
 @Table(name="unidades")
@@ -85,6 +86,26 @@ public class Unidad {
 	
 	public boolean estaHabitado() {
 		return habitado;
+	}
+
+	public boolean esDuenio(Persona persona){
+		AtomicBoolean esDuenio= new AtomicBoolean(false);
+		duenios.forEach(duenio -> {
+			if(duenio.getDocumento().equals(persona.getDocumento())){
+				esDuenio.set(true);
+			}
+		});
+		return esDuenio.get();
+	}
+
+	public boolean esInquilino(Persona persona){
+		AtomicBoolean esInquilino= new AtomicBoolean(false);
+		inquilinos.forEach(inquilino -> {
+			if(inquilino.getDocumento().equals(persona.getDocumento())){
+				esInquilino.set(true);
+			}
+		});
+		return esInquilino.get();
 	}
 	
 	public void liberar() {
